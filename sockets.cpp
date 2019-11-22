@@ -1,3 +1,7 @@
+//Shane Spangenberg
+//CPSC 351
+//Professor Oates
+
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
@@ -37,7 +41,8 @@ void send()
         cout<<"->";
         fgets(input, 1024, stdin);
         strtok(input, "\n");
-        if(strcmp(input, "exit")==0)
+
+        if(strcmp(input, "exit")==10)
         {
             break;
         }
@@ -61,14 +66,11 @@ void send()
 
 void receive()
 {
-    char buff[1024] = {0};
+    char buff[1024];
     int sockfd, readStatus;
     struct sockaddr_in serAddr;
     socklen_t Addrlen;
-    serAddr.sin_family = AF_INET;
-    serAddr.sin_port = htons(3515);
-    serAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-    Addrlen = sizeof(serAddr);
+    
 
     while(1)
     {
@@ -76,11 +78,25 @@ void receive()
         {
             cout<<"Error creating receive socket\n";
         }
-        readStatus = recvfrom(sockfd, buff, 1024, 0, (struct sockaddr*)&serAddr, &Addrlen);
-        if(readStatus < 0)
+
+        serAddr.sin_family = AF_INET;
+        serAddr.sin_port = htons(3515);
+        serAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        Addrlen = (socklen_t)sizeof(serAddr);
+
+        if(bind(sockfd, (const struct sockaddr *)&serAddr, Addrlen) < 0)
+        {
+            perror("bind failed"); 
+            exit(EXIT_FAILURE); 
+        }
+
+        if((readStatus=recvfrom(sockfd, buff, 1024, 0, (struct sockaddr*)&serAddr, &Addrlen)) < 0)
         {
             cout<<"Error receiving..\n";
         }
-        cout<<"->"<<buff<<endl;
+        buff[readStatus]='\0';
+        cout<<buff<<endl;
+
+        close(sockfd);
     }
 }

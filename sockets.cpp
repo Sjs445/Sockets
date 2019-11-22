@@ -38,15 +38,13 @@ void send()
     thread th1(receive);
     while(1)
     {
-        cout<<"->";
         fgets(input, 1024, stdin);
-        strtok(input, "\n");
-
-        if(strcmp(input, "exit")==10)
+       input[strcspn(input, "\n")]='\0';
+        if(strcmp(input, "exit")==0)
         {
             break;
         }
-        if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) <0)
+        if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         {
             cout<<"Error creating send socket\n";
         }
@@ -61,6 +59,7 @@ void send()
         }
         close(sockfd);
     }
+    cout<<"Goodbye!";
     th1.join();
 }
 
@@ -71,7 +70,6 @@ void receive()
     struct sockaddr_in serAddr;
     socklen_t Addrlen;
     
-
     while(1)
     {
         if((sockfd=socket(AF_INET, SOCK_DGRAM, 0)) < 0)

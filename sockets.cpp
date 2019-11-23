@@ -46,10 +46,6 @@ void send()
         }
         if((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
         {
-            cout<<"Error creating send socket\n";
-        }
-        if(sockfd<0)
-        {
             cout<<"Error opening socket\n";
         }
         if(sendto(sockfd, input, strlen(input), 0, (struct sockaddr*)&serAddr, sizeof(serAddr)) < 0)
